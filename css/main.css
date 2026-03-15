@@ -20,6 +20,9 @@
 @import "components/cards.css";
 @import "components/carousel.css";
 
+/* Auth flow */
+@import "auth.css";
+
 /* Utilities & misc */
 @import "utilities.css";
 

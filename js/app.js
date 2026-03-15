@@ -41,12 +41,26 @@ const badge=(txt,cls)=>H("span",{className:`status ${cls||SC(txt)}`},txt);
 const find=id=>C.perfs.find(p=>p.id===id);
 const ytId=url=>{const m=url.match(/[?&]v=([^&]+)/)||url.match(/embed\/([^?&]+)/)||url.match(/youtu\.be\/([^?&]+)/);return m?m[1]:null};
 /* ---- ROUTER ---- */
-function nav(){const raw=location.hash.replace("#","")||"dashboard";const[s,...r]=raw.split("/");const p=r.join("/");
+const AUTH_ROUTES=new Set(["login","register","forgot-password","check-email","reset-password","password-updated","verify-email"]);
+function nav(){
+ const raw=location.hash.replace("#","")||"dashboard";
+ const[s,...r]=raw.split("/");const p=r.join("/");
+ const authRoot=document.getElementById("auth-root");
+ const appShell=document.querySelector(".app-shell");
+ if(AUTH_ROUTES.has(s)){
+  appShell.style.display="none";authRoot.style.display="";authRoot.innerHTML="";
+  const authFn={login:renderLogin,register:renderRegister,"forgot-password":renderForgotPassword,
+   "check-email":renderCheckEmail,"reset-password":renderResetPassword,
+   "password-updated":renderPasswordUpdated,"verify-email":renderVerifyEmail}[s]||renderLogin;
+  authRoot.append(authFn());return;
+ }
+ authRoot.style.display="none";appShell.style.display="";
  const root=document.getElementById("page-content");root.innerHTML="";
  const fn={dashboard:renderDash,performances:renderPerfs,performance:()=>renderDetail(p),"mix-builder":()=>renderMix(p),
   "competition-day":renderDay,assets:renderAssets,settings:renderSettings}[s]||renderDash;
  root.append(fn());
- document.querySelectorAll(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.screen===s));}
+ document.querySelectorAll(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.screen===s));
+}
 window.addEventListener("hashchange",nav);
 window.addEventListener("DOMContentLoaded",nav);
 
@@ -300,4 +314,185 @@ function renderSettings(){
  pg.append(H("section",{className:"panel"},H("header",{},H("h3",{},"Export Defaults")),
   H("p",{},"Set default audio format, naming conventions, and output folder.")));
  return pg;
+}
+
+/* ===========================================================
+   AUTH SCREENS
+   =========================================================== */
+
+/* Shared brand-panel builder for Login & Register (split-screen) */
+function authBrandPanel(eyebrow,headline,desc){
+ return H("section",{className:"auth-brand-panel","aria-label":"Brand introduction"},
+  H("div",{className:"auth-brand-content"},
+   H("a",{href:"#dashboard",className:"auth-logo"},"Dance Cultures Hub"),
+   H("p",{className:"auth-eyebrow"},eyebrow),
+   H("h1",{},headline),
+   H("p",{className:"auth-description"},desc),
+   H("ul",{className:"auth-feature-list"},
+    H("li",{},"Routine management"),
+    H("li",{},"Reference video tracking"),
+    H("li",{},"Mix builder workflow"),
+    H("li",{},"Competition day prep"))));
+}
+
+/* Shared auth card header */
+function authCardHeader(eyebrow,title,desc){
+ return H("header",{className:"auth-card-header"},
+  H("p",{className:"auth-eyebrow"},eyebrow),H("h2",{},title),H("p",{},desc));
+}
+
+/* ---- 1) LOGIN ---- */
+function renderLogin(){
+ const main=H("main",{className:"auth-page login-page"});
+ const shell=H("div",{className:"auth-shell"});
+ shell.append(authBrandPanel("Competition Content Management",
+  "Create mixes. Track routines. Stay competition-ready.",
+  "Manage music cuts, reference videos, routine notes, and competition-day readiness in one place."));
+ const card=H("div",{className:"auth-card"});
+ card.append(authCardHeader("Welcome Back","Log in to your account",
+  "Access routines, mixes, assets, and competition planning tools."));
+ const form=H("form",{className:"auth-form"});
+ form.append(
+  H("div",{className:"form-group"},H("label",{for:"login-email"},"Email Address"),
+   H("input",{id:"login-email",name:"email",type:"email",autocomplete:"email",placeholder:"name@example.com",required:""})),
+  H("div",{className:"form-group"},H("label",{for:"login-password"},"Password"),
+   H("input",{id:"login-password",name:"password",type:"password",autocomplete:"current-password",placeholder:"Enter your password",required:""})),
+  H("div",{className:"auth-row"},
+   H("label",{className:"checkbox-field",for:"remember-me"},
+    H("input",{id:"remember-me",name:"remember_me",type:"checkbox"}),H("span",{},"Remember me")),
+   H("a",{href:"#forgot-password",className:"auth-link"},"Forgot password?")),
+  H("div",{className:"form-actions"},H("button",{type:"submit"},"Log In")));
+ form.addEventListener("submit",e=>{e.preventDefault();location.hash="#dashboard";});
+ card.append(form);
+ card.append(H("div",{className:"auth-divider","aria-hidden":"true"},H("span",{},"Or continue with")));
+ card.append(H("div",{className:"social-auth"},H("button",{type:"button"},"Continue with Google")));
+ card.append(H("footer",{className:"auth-card-footer"},
+  H("p",{},"Don\u2019t have an account? ",H("a",{href:"#register",className:"auth-link"},"Sign up"))));
+ shell.append(H("section",{className:"auth-form-panel","aria-label":"Login form area"},card));
+ main.append(shell);return main;
+}
+
+/* ---- 2) REGISTER ---- */
+function renderRegister(){
+ const main=H("main",{className:"auth-page register-page"});
+ const shell=H("div",{className:"auth-shell"});
+ shell.append(authBrandPanel("Set Up Your Workspace",
+  "Build your competition workflow from day one.",
+  "Create an account to organize routines, track edits, store references, and prepare for performance day."));
+ const card=H("div",{className:"auth-card"});
+ card.append(authCardHeader("Create Account","Start your workspace",
+  "Set up your account for routine management and music production planning."));
+ const form=H("form",{className:"auth-form"});
+ form.append(
+  H("div",{className:"form-group"},H("label",{for:"register-name"},"Full Name"),
+   H("input",{id:"register-name",name:"full_name",type:"text",autocomplete:"name",placeholder:"Your full name",required:""})),
+  H("div",{className:"form-group"},H("label",{for:"register-email"},"Email Address"),
+   H("input",{id:"register-email",name:"email",type:"email",autocomplete:"email",placeholder:"name@example.com",required:""})),
+  H("div",{className:"form-group"},H("label",{for:"register-password"},"Password"),
+   H("input",{id:"register-password",name:"password",type:"password",autocomplete:"new-password",placeholder:"Create a password",required:""})),
+  H("div",{className:"form-group"},H("label",{for:"register-confirm-password"},"Confirm Password"),
+   H("input",{id:"register-confirm-password",name:"confirm_password",type:"password",autocomplete:"new-password",placeholder:"Confirm your password",required:""})),
+  H("label",{className:"checkbox-field",for:"accept-terms"},
+   H("input",{id:"accept-terms",name:"accept_terms",type:"checkbox",required:""}),
+   H("span",{},"I agree to the Terms and Privacy Policy")),
+  H("div",{className:"form-actions"},H("button",{type:"submit"},"Create Account")));
+ form.addEventListener("submit",e=>{e.preventDefault();location.hash="#verify-email";});
+ card.append(form);
+ card.append(H("footer",{className:"auth-card-footer"},
+  H("p",{},"Already have an account? ",H("a",{href:"#login",className:"auth-link"},"Log in"))));
+ shell.append(H("section",{className:"auth-form-panel","aria-label":"Registration form area"},card));
+ main.append(shell);return main;
+}
+
+/* ---- 3) FORGOT PASSWORD ---- */
+function renderForgotPassword(){
+ const main=H("main",{className:"auth-page forgot-password-page"});
+ const shell=H("div",{className:"auth-shell auth-shell-centered"});
+ const card=H("div",{className:"auth-card"});
+ card.append(authCardHeader("Forgot Password","Reset your password",
+  "Enter your email address and we\u2019ll send you a password reset link."));
+ const form=H("form",{className:"auth-form"});
+ form.append(
+  H("div",{className:"form-group"},H("label",{for:"forgot-email"},"Email Address"),
+   H("input",{id:"forgot-email",name:"email",type:"email",autocomplete:"email",placeholder:"name@example.com",required:""})),
+  H("div",{className:"form-actions"},H("button",{type:"submit"},"Send Reset Link")));
+ form.addEventListener("submit",e=>{e.preventDefault();location.hash="#check-email";});
+ card.append(form);
+ card.append(H("footer",{className:"auth-card-footer"},
+  H("p",{},H("a",{href:"#login",className:"auth-link"},"Back to Log In"))));
+ shell.append(H("section",{className:"auth-form-panel","aria-label":"Forgot password form area"},card));
+ main.append(shell);return main;
+}
+
+/* ---- 4) CHECK EMAIL ---- */
+function renderCheckEmail(){
+ const main=H("main",{className:"auth-page check-email-page"});
+ const shell=H("div",{className:"auth-shell auth-shell-centered"});
+ const card=H("div",{className:"auth-card auth-card-message"});
+ card.append(H("header",{className:"auth-card-header"},
+  H("p",{className:"auth-eyebrow"},"Check Your Email"),
+  H("h2",{},"Password reset link sent"),
+  H("p",{},"We sent a password reset link to ",H("strong",{},"user@email.com"),
+   ". Open the link in your inbox to continue.")));
+ card.append(H("div",{className:"message-actions"},
+  H("button",{type:"button"},"Resend Email"),
+  H("a",{href:"#login",className:"auth-link-button"},"Back to Log In")));
+ shell.append(H("section",{className:"auth-form-panel","aria-label":"Check email message"},card));
+ main.append(shell);return main;
+}
+
+/* ---- 5) RESET PASSWORD ---- */
+function renderResetPassword(){
+ const main=H("main",{className:"auth-page reset-password-page"});
+ const shell=H("div",{className:"auth-shell auth-shell-centered"});
+ const card=H("div",{className:"auth-card"});
+ card.append(authCardHeader("Reset Password","Create a new password",
+  "Choose a strong password for your account."));
+ const form=H("form",{className:"auth-form"});
+ form.append(
+  H("div",{className:"form-group"},H("label",{for:"new-password"},"New Password"),
+   H("input",{id:"new-password",name:"new_password",type:"password",autocomplete:"new-password",placeholder:"Enter new password",required:""})),
+  H("div",{className:"form-group"},H("label",{for:"confirm-new-password"},"Confirm New Password"),
+   H("input",{id:"confirm-new-password",name:"confirm_new_password",type:"password",autocomplete:"new-password",placeholder:"Confirm new password",required:""})),
+  H("section",{className:"password-rules","aria-label":"Password requirements"},
+   H("h3",{},"Password requirements"),
+   H("ul",{},H("li",{},"At least 8 characters"),H("li",{},"At least 1 number"),H("li",{},"At least 1 special character"))),
+  H("div",{className:"form-actions"},H("button",{type:"submit"},"Update Password")));
+ form.addEventListener("submit",e=>{e.preventDefault();location.hash="#password-updated";});
+ card.append(form);
+ shell.append(H("section",{className:"auth-form-panel","aria-label":"Reset password form area"},card));
+ main.append(shell);return main;
+}
+
+/* ---- 6) PASSWORD UPDATED ---- */
+function renderPasswordUpdated(){
+ const main=H("main",{className:"auth-page password-updated-page"});
+ const shell=H("div",{className:"auth-shell auth-shell-centered"});
+ const card=H("div",{className:"auth-card auth-card-message"});
+ card.append(H("header",{className:"auth-card-header"},
+  H("p",{className:"auth-eyebrow"},"Success"),
+  H("h2",{},"Password updated"),
+  H("p",{},"Your password has been updated successfully. You can now log in to your account.")));
+ card.append(H("div",{className:"message-actions"},
+  H("a",{href:"#login",className:"auth-link-button"},"Go to Log In")));
+ shell.append(H("section",{className:"auth-form-panel","aria-label":"Password update confirmation"},card));
+ main.append(shell);return main;
+}
+
+/* ---- 7) VERIFY EMAIL ---- */
+function renderVerifyEmail(){
+ const main=H("main",{className:"auth-page verify-email-page"});
+ const shell=H("div",{className:"auth-shell auth-shell-centered"});
+ const card=H("div",{className:"auth-card auth-card-message"});
+ card.append(H("header",{className:"auth-card-header"},
+  H("p",{className:"auth-eyebrow"},"Verify Your Email"),
+  H("h2",{},"Account created"),
+  H("p",{},"Your account has been created. We sent a verification email to ",
+   H("strong",{},"user@email.com"),"."),
+  H("p",{},"Please verify your email before accessing the full dashboard.")));
+ card.append(H("div",{className:"message-actions"},
+  H("button",{type:"button"},"Resend Email"),
+  H("a",{href:"#login",className:"auth-link-button"},"Go to Log In")));
+ shell.append(H("section",{className:"auth-form-panel","aria-label":"Verify email message"},card));
+ main.append(shell);return main;
 }
