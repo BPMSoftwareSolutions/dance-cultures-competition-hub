@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dance Cultures Competition Hub</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Dance Cultures Hub</h1>
+      </div>
+      <nav class="main-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#dashboard" data-screen="dashboard">Dashboard</a></li>
+          <li><a href="#performances" data-screen="performances">Performances</a></li>
+          <li><a href="#mix-builder" data-screen="mix-builder">Mix Builder</a></li>
+          <li><a href="#competition-day" data-screen="competition-day">Competition Day</a></li>
+          <li><a href="#assets" data-screen="assets">Assets &amp; References</a></li>
+          <li><a href="#settings" data-screen="settings">Settings</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="main-panel">
+      <header class="topbar">
+        <div class="topbar-left">
+          <form class="search-form" role="search">
+            <label for="global-search">Search</label>
+            <input id="global-search" name="q" type="search" placeholder="Search performances, songs, notes…" />
+          </form>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="secondary">New Routine</button>
+          <button type="button">Export Day Pack</button>
+        </div>
+      </header>
+
+      <main class="page-content" id="page-content">
+        <!-- Screens injected by app.js -->
+      </main>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
+

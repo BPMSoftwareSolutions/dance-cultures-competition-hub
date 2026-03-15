@@ -1,0 +1,24 @@
+# Media & audio
+*.mp3
+*.wav
+*.aac
+*.m4a
+
+# Video
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Premiere Pro projects & caches
+*.prproj
+Adobe Premiere Pro Audio Previews/
+Adobe Premiere Pro Auto-Save/
+
+# Performance media folders
+**/Music/
+**/Videos/
+
+# Misc
+MASTER_COMPETITION_NOTES.txt
+
