@@ -1,0 +1,12 @@
+/* === STATUS / BADGES === */
+.performance-status-list,.activity-feed,.source-track-list,.deliverables-list{list-style:none;padding:0;margin:0}
+.performance-status-list li,.activity-feed li,.deliverables-list li,.folder-panel li{border-top:1px solid var(--border)}
+.performance-status-list li:first-child,.activity-feed li:first-child,.deliverables-list li:first-child,.folder-panel li:first-child{border-top:0}
+.performance-status-list a,.activity-feed li,.deliverables-list li{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:.9rem 0}
+.activity-feed time{min-width:60px;color:var(--muted);font-weight:700}
+.status,.badge{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.35rem .7rem;font-size:.78rem;font-weight:700}
+.status-ready{background:var(--success-soft);color:var(--success)}
+.status-review{background:var(--warning-soft);color:var(--warning)}
+.status-warning{background:var(--danger-soft);color:var(--danger)}
+.badge{background:var(--primary-soft);color:var(--primary)}
+

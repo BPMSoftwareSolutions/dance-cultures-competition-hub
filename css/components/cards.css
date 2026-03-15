@@ -1,0 +1,6 @@
+/* === PERFORMANCE CARDS === */
+.performance-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-4)}
+.performance-card{padding:var(--space-5);display:grid;gap:var(--space-3);align-content:start}
+.performance-card p{color:var(--muted)}
+.performance-card footer{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);margin-top:var(--space-2)}
+

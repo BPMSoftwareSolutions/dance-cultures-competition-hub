@@ -1,0 +1,8 @@
+/* === BUTTONS === */
+button,.button{appearance:none;border:1px solid transparent;background:var(--primary);color:#fff;padding:.72rem 1rem;border-radius:999px;font-weight:600;cursor:pointer;transition:background .2s,transform .15s,border-color .2s}
+button:hover,.button:hover{background:var(--primary-dark)}
+button:active,.button:active{transform:translateY(1px)}
+button.secondary,.button.secondary{background:var(--surface);color:var(--text);border-color:var(--border)}
+button.secondary:hover,.button.secondary:hover{background:var(--surface-2)}
+.action-list,.output-actions,.mobile-actions,.form-actions{display:flex;gap:var(--space-3);flex-wrap:wrap}
+

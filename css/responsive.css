@@ -1,0 +1,13 @@
+/* === RESPONSIVE === */
+@media(max-width:960px){
+  .app-shell{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .summary-cards{grid-template-columns:repeat(2,1fr)}
+  .dashboard-grid,.detail-grid,.mix-builder-layout,.assets-layout,.competition-day-bottom-grid,.performance-card-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .summary-cards{grid-template-columns:1fr}
+  .page{padding:var(--space-4)}
+  .topbar{padding:var(--space-3) var(--space-4)}
+}
+

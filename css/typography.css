@@ -1,0 +1,7 @@
+/* === TYPOGRAPHY === */
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:var(--space-2);font-weight:700}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
+.page-header h2{font-size:1.9rem;color:var(--heading);line-height:1.15;margin-bottom:var(--space-2)}
+.page-header p{color:var(--muted)}
+.page-actions{display:flex;gap:var(--space-3);flex-wrap:wrap}
+

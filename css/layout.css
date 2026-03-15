@@ -1,0 +1,14 @@
+/* === LAYOUT === */
+.app-shell{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+.sidebar{background:#111827;color:#f9fafb;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-8);border-right:1px solid rgba(255,255,255,.08);position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand h1{font-size:1.4rem;font-weight:700;line-height:1.2}
+.main-nav ul{list-style:none;padding:0;margin:0;display:grid;gap:var(--space-2)}
+.main-nav a{display:block;padding:.8rem .95rem;border-radius:var(--radius-sm);color:#d1d5db;transition:background .2s,color .2s}
+.main-nav a:hover,.main-nav a:focus{background:rgba(255,255,255,.08);color:#fff}
+.main-nav a.active{background:rgba(255,255,255,.12);color:#fff}
+.main-panel{min-width:0;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:var(--space-4) var(--space-6);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);position:sticky;top:0;z-index:20}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:var(--space-3)}
+.page-content,.page{padding:var(--space-6)}
+.page{display:grid;gap:var(--space-6)}
+
