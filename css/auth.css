@@ -147,6 +147,12 @@
 
 .auth-form { display: grid; gap: var(--space-5); }
 
+.auth-error {
+  background: #fef2f2; color: #b42318; border: 1px solid #fecaca;
+  border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4);
+  font-size: 0.9rem; font-weight: 600;
+}
+
 .auth-page .form-group { display: grid; gap: var(--space-2); }
 .auth-page .form-group label,
 .auth-page .checkbox-field { font-weight: 700; color: var(--heading); }

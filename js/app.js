@@ -40,26 +40,57 @@ const SC=s=>({"Draft":"status-review","In Progress":"status-review","Review":"st
 const badge=(txt,cls)=>H("span",{className:`status ${cls||SC(txt)}`},txt);
 const find=id=>C.perfs.find(p=>p.id===id);
 const ytId=url=>{const m=url.match(/[?&]v=([^&]+)/)||url.match(/embed\/([^?&]+)/)||url.match(/youtu\.be\/([^?&]+)/);return m?m[1]:null};
+/* ---- AUTH STATE ---- */
+const DEV_USER={email:"dev@local.test",password:"DevPassword123!",fullName:"Developer"};
+const authState={
+ token:localStorage.getItem("authToken"),
+ user:JSON.parse(localStorage.getItem("authUser")||"null"),
+ get isAuthenticated(){return Boolean(this.token);}
+};
+function authLogin(token,user){
+ authState.token=token;authState.user=user;
+ localStorage.setItem("authToken",token);localStorage.setItem("authUser",JSON.stringify(user));
+}
+function authLogout(){
+ authState.token=null;authState.user=null;
+ localStorage.removeItem("authToken");localStorage.removeItem("authUser");
+ location.hash="#login";
+}
+
 /* ---- ROUTER ---- */
-const AUTH_ROUTES=new Set(["login","register","forgot-password","check-email","reset-password","password-updated","verify-email"]);
+const PUBLIC_ROUTES=new Set(["login","register","forgot-password","check-email","reset-password","password-updated","verify-email"]);
+const PROTECTED_ROUTES=new Set(["dashboard","performances","performance","mix-builder","competition-day","assets","settings"]);
+
 function nav(){
- const raw=location.hash.replace("#","")||"dashboard";
+ const raw=location.hash.replace("#","")||"";
  const[s,...r]=raw.split("/");const p=r.join("/");
+ const screen=s||"";
+
+ /* Auth gate: resolve route based on auth state */
+ if(!authState.isAuthenticated && !PUBLIC_ROUTES.has(screen)){
+  location.hash="#login";return;
+ }
+ if(authState.isAuthenticated && PUBLIC_ROUTES.has(screen)){
+  location.hash="#dashboard";return;
+ }
+
  const authRoot=document.getElementById("auth-root");
  const appShell=document.querySelector(".app-shell");
- if(AUTH_ROUTES.has(s)){
+
+ if(PUBLIC_ROUTES.has(screen)){
   appShell.style.display="none";authRoot.style.display="";authRoot.innerHTML="";
   const authFn={login:renderLogin,register:renderRegister,"forgot-password":renderForgotPassword,
    "check-email":renderCheckEmail,"reset-password":renderResetPassword,
-   "password-updated":renderPasswordUpdated,"verify-email":renderVerifyEmail}[s]||renderLogin;
+   "password-updated":renderPasswordUpdated,"verify-email":renderVerifyEmail}[screen]||renderLogin;
   authRoot.append(authFn());return;
  }
+
  authRoot.style.display="none";appShell.style.display="";
  const root=document.getElementById("page-content");root.innerHTML="";
  const fn={dashboard:renderDash,performances:renderPerfs,performance:()=>renderDetail(p),"mix-builder":()=>renderMix(p),
-  "competition-day":renderDay,assets:renderAssets,settings:renderSettings}[s]||renderDash;
+  "competition-day":renderDay,assets:renderAssets,settings:renderSettings}[screen]||renderDash;
  root.append(fn());
- document.querySelectorAll(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.screen===s));
+ document.querySelectorAll(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.screen===screen));
 }
 window.addEventListener("hashchange",nav);
 window.addEventListener("DOMContentLoaded",nav);
@@ -362,7 +393,18 @@ function renderLogin(){
     H("input",{id:"remember-me",name:"remember_me",type:"checkbox"}),H("span",{},"Remember me")),
    H("a",{href:"#forgot-password",className:"auth-link"},"Forgot password?")),
   H("div",{className:"form-actions"},H("button",{type:"submit"},"Log In")));
- form.addEventListener("submit",e=>{e.preventDefault();location.hash="#dashboard";});
+ form.addEventListener("submit",e=>{e.preventDefault();
+  const em=form.querySelector("#login-email").value.trim();
+  const pw=form.querySelector("#login-password").value;
+  if(em===DEV_USER.email&&pw===DEV_USER.password){
+   authLogin("dev-token-"+Date.now(),{email:DEV_USER.email,fullName:DEV_USER.fullName});
+   location.hash="#dashboard";
+  }else{
+   let err=form.querySelector(".auth-error");
+   if(!err){err=H("p",{className:"auth-error"});form.prepend(err);}
+   err.textContent="Invalid email or password. Use dev@local.test / DevPassword123!";
+  }
+ });
  card.append(form);
  card.append(H("div",{className:"auth-divider","aria-hidden":"true"},H("span",{},"Or continue with")));
  card.append(H("div",{className:"social-auth"},H("button",{type:"button"},"Continue with Google")));
